@@ -3,7 +3,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Header from "@/components/Header";
 import HeroCreator from "@/components/HeroCreator";
 import HeroGallery from "@/components/HeroGallery";
-import { Plus, Users } from "lucide-react";
+import StoryCreator from "./StoryCreator";
+import { Plus, Users, BookOpen } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface Hero {
@@ -58,6 +59,7 @@ const Index = () => {
   ]);
 
   const [activeTab, setActiveTab] = useState("gallery");
+  const [showStoryCreator, setShowStoryCreator] = useState(false);
 
   const handleSaveHero = (hero: Hero) => {
     setHeroes(prev => [...prev, hero]);
@@ -65,6 +67,7 @@ const Index = () => {
   };
 
   const handleUseHero = (hero: Hero) => {
+    setShowStoryCreator(true);
     toast({
       title: "تم اختيار الشخصية!",
       description: `تم اختيار ${hero.name} للاستخدام في القصة المصورة`
@@ -99,12 +102,31 @@ const Index = () => {
     });
   };
 
+  if (showStoryCreator) {
+    return (
+      <StoryCreator 
+        heroes={heroes} 
+        onBack={() => setShowStoryCreator(false)} 
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-subtle">
       <Header />
       
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-8">
+            <button
+              onClick={() => setShowStoryCreator(true)}
+              className="gradient-hero text-white px-6 py-3 rounded-lg hover:shadow-hero transition-smooth flex items-center gap-2 mx-auto mb-6"
+            >
+              <BookOpen className="w-5 h-5" />
+              إنشاء قصة مصورة
+            </button>
+          </div>
+
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 max-w-md mx-auto mb-8 bg-card/50 backdrop-blur-sm shadow-card">
               <TabsTrigger 

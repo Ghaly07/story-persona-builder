@@ -164,14 +164,6 @@ const HeroCreator = ({ onSaveHero }: HeroCreatorProps) => {
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="photo" className="text-sm font-medium">الصورة</Label>
-          <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary transition-smooth cursor-pointer bg-muted/30">
-            <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground">اختر ملف أو اسحبه هنا</p>
-            <p className="text-xs text-muted-foreground mt-1">PNG, JPG حتى 10MB</p>
-          </div>
-        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
