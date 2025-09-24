@@ -10,6 +10,7 @@ import { BookOpen, Plus, X, Users, Wand2, Save, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import CharacterSelector from "@/components/CharacterSelector";
 import SceneCard from "@/components/SceneCard";
+import StoryProgressModal from "@/components/StoryProgressModal";
 
 interface Hero {
   id: string;
@@ -47,6 +48,7 @@ const StoryCreator = ({ heroes, onBack }: StoryCreatorProps) => {
   ]);
 
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showProgress, setShowProgress] = useState(false);
 
   const addScene = () => {
     const newScene: Scene = {
@@ -100,14 +102,16 @@ const StoryCreator = ({ heroes, onBack }: StoryCreatorProps) => {
     }
 
     setIsGenerating(true);
-    
-    setTimeout(() => {
-      toast({
-        title: "تم إنشاء القصة!",
-        description: "تم إنشاء قصتك المصورة بنجاح"
-      });
-      setIsGenerating(false);
-    }, 3000);
+    setShowProgress(true);
+  };
+
+  const handleProgressComplete = () => {
+    setShowProgress(false);
+    setIsGenerating(false);
+    toast({
+      title: "🎉 تم إنشاء القصة بنجاح!",
+      description: "قصتك المصورة جاهزة الآن للمشاهدة والمشاركة"
+    });
   };
 
   return (
@@ -247,6 +251,12 @@ const StoryCreator = ({ heroes, onBack }: StoryCreatorProps) => {
           </div>
         </div>
       </div>
+      
+      {/* Progress Modal */}
+      <StoryProgressModal 
+        isOpen={showProgress}
+        onComplete={handleProgressComplete}
+      />
     </div>
   );
 };
