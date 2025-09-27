@@ -9,6 +9,14 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { Play, MoreHorizontal, Edit, Trash2, Copy, Download } from "lucide-react";
+import SideCharacterCard from "./SideCharacterCard";
+
+interface SideCharacter {
+  id: string;
+  name: string;
+  description: string;
+  image?: string;
+}
 
 interface Hero {
   id: string;
@@ -18,6 +26,7 @@ interface Hero {
   style: string;
   description: string;
   image?: string;
+  sideCharacters?: SideCharacter[];
 }
 
 interface HeroCardProps {
@@ -145,6 +154,22 @@ const HeroCard = ({ hero, onUse, onEdit, onDelete, onDuplicate }: HeroCardProps)
           <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
             {hero.description}
           </p>
+        )}
+
+        {hero.sideCharacters && hero.sideCharacters.length > 0 && (
+          <div className="mb-3">
+            <p className="text-xs font-medium text-muted-foreground mb-2">الشخصيات الجانبية:</p>
+            <div className="grid grid-cols-2 gap-2">
+              {hero.sideCharacters.slice(0, 4).map((character) => (
+                <SideCharacterCard key={character.id} character={character} />
+              ))}
+            </div>
+            {hero.sideCharacters.length > 4 && (
+              <p className="text-xs text-muted-foreground mt-1 text-center">
+                +{hero.sideCharacters.length - 4} شخصية أخرى
+              </p>
+            )}
+          </div>
         )}
 
         <Button

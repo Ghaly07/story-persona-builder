@@ -7,6 +7,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Upload, Wand2, Save, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import SideCharacterManager from "./SideCharacterManager";
+
+interface SideCharacter {
+  id: string;
+  name: string;
+  description: string;
+  image?: string;
+}
 
 interface HeroData {
   name: string;
@@ -16,6 +24,7 @@ interface HeroData {
   description: string;
   imageModel: string;
   textModel: string;
+  sideCharacters: SideCharacter[];
 }
 
 interface HeroCreatorProps {
@@ -31,7 +40,8 @@ const HeroCreator = ({ onSaveHero }: HeroCreatorProps) => {
     style: "",
     description: "",
     imageModel: "flux-realism",
-    textModel: "flux-plus"
+    textModel: "flux-plus",
+    sideCharacters: []
   });
 
   const [isGenerating, setIsGenerating] = useState(false);
@@ -88,7 +98,8 @@ const HeroCreator = ({ onSaveHero }: HeroCreatorProps) => {
       style: "",
       description: "",
       imageModel: "flux-realism",
-      textModel: "flux-plus"
+      textModel: "flux-plus",
+      sideCharacters: []
     });
 
     toast({
@@ -208,6 +219,42 @@ const HeroCreator = ({ onSaveHero }: HeroCreatorProps) => {
             إذا قمت برفع صورة أعلاه، فسيتم استخدام الصورة كمرجع تلقائياً. بدون صورة، سيتم استخدام الوصف النصي.
           </p>
         </div>
+
+        <SideCharacterManager
+          sideCharacters={heroData.sideCharacters}
+          onAddSideCharacter={(character) => {
+            const newCharacter = { ...character, id: Date.now().toString() };
+            setHeroData(prev => ({ 
+              ...prev, 
+              sideCharacters: [...prev.sideCharacters, newCharacter] 
+            }));
+          }}
+          onEditSideCharacter={(character) => {
+            setHeroData(prev => ({ 
+              ...prev, 
+              sideCharacters: prev.sideCharacters.map(c => 
+                c.id === character.id ? character : c
+              ) 
+            }));
+          }}
+          onDeleteSideCharacter={(characterId) => {
+            setHeroData(prev => ({ 
+              ...prev, 
+              sideCharacters: prev.sideCharacters.filter(c => c.id !== characterId) 
+            }));
+          }}
+          onDuplicateSideCharacter={(character) => {
+            const duplicated = { 
+              ...character, 
+              id: Date.now().toString(),
+              name: `${character.name} - نسخة` 
+            };
+            setHeroData(prev => ({ 
+              ...prev, 
+              sideCharacters: [...prev.sideCharacters, duplicated] 
+            }));
+          }}
+        />
 
         <div className="flex gap-3 pt-4">
           <Button

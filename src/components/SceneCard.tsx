@@ -8,6 +8,13 @@ import { Badge } from "@/components/ui/badge";
 import { X, Users, Plus, Trash2 } from "lucide-react";
 import CharacterSelector from "./CharacterSelector";
 
+interface SideCharacter {
+  id: string;
+  name: string;
+  description: string;
+  image?: string;
+}
+
 interface Hero {
   id: string;
   name: string;
@@ -16,13 +23,16 @@ interface Hero {
   style: string;
   description: string;
   image?: string;
+  sideCharacters?: SideCharacter[];
 }
+
+type Character = Hero | (SideCharacter & { heroName: string; type: 'side' });
 
 interface Scene {
   id: string;
   title: string;
   description: string;
-  selectedCharacters: Hero[];
+  selectedCharacters: Character[];
 }
 
 interface SceneCardProps {
@@ -32,7 +42,7 @@ interface SceneCardProps {
   canDelete: boolean;
   onUpdateScene: (sceneId: string, field: string, value: string) => void;
   onRemoveScene: (sceneId: string) => void;
-  onAddCharacter: (sceneId: string, character: Hero) => void;
+  onAddCharacter: (sceneId: string, character: Character) => void;
   onRemoveCharacter: (sceneId: string, characterId: string) => void;
 }
 
@@ -125,8 +135,24 @@ const SceneCard = ({
                     />
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm text-foreground truncate">{character.name}</p>
-                    <p className="text-xs text-muted-foreground truncate">{character.ageGroup}</p>
+                    <div className="flex items-center gap-1 mb-1">
+                      <p className="font-medium text-sm text-foreground truncate">{character.name}</p>
+                      {'type' in character && character.type === 'side' && (
+                        <Badge variant="outline" className="text-xs bg-accent/10 text-accent border-accent/30">
+                          جانبية
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      {'ageGroup' in character && character.ageGroup && (
+                        <p className="text-xs text-muted-foreground truncate">{character.ageGroup}</p>
+                      )}
+                      {'heroName' in character && (
+                        <p className="text-xs text-muted-foreground truncate">
+                          (من: {character.heroName})
+                        </p>
+                      )}
+                    </div>
                   </div>
                   <Button
                     variant="ghost"

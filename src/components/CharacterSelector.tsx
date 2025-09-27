@@ -5,6 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Search, Users, X } from "lucide-react";
 
+interface SideCharacter {
+  id: string;
+  name: string;
+  description: string;
+  image?: string;
+}
+
 interface Hero {
   id: string;
   name: string;
@@ -13,12 +20,15 @@ interface Hero {
   style: string;
   description: string;
   image?: string;
+  sideCharacters?: SideCharacter[];
 }
+
+type Character = Hero | (SideCharacter & { heroName: string; type: 'side' });
 
 interface CharacterSelectorProps {
   heroes: Hero[];
-  selectedCharacters: Hero[];
-  onSelectCharacter: (character: Hero) => void;
+  selectedCharacters: Character[];
+  onSelectCharacter: (character: Character) => void;
   onClose: () => void;
 }
 
@@ -26,11 +36,27 @@ const CharacterSelector = ({ heroes, selectedCharacters, onSelectCharacter, onCl
   const [searchTerm, setSearchTerm] = useState("");
   const [filterGender, setFilterGender] = useState("");
 
-  const filteredHeroes = heroes.filter(hero => {
-    const matchesSearch = hero.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         hero.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesGender = !filterGender || hero.gender === filterGender;
-    const isNotSelected = !selectedCharacters.find(c => c.id === hero.id);
+  // Create a combined list of main heroes and side characters
+  const allCharacters: Character[] = [
+    ...heroes,
+    ...heroes.flatMap(hero => 
+      hero.sideCharacters?.map(sideChar => ({
+        ...sideChar,
+        heroName: hero.name,
+        type: 'side' as const
+      })) || []
+    )
+  ];
+
+  const filteredCharacters = allCharacters.filter(character => {
+    const matchesSearch = character.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         character.description.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesGender = !filterGender || 
+                         ('gender' in character ? character.gender === filterGender : true);
+    
+    const isNotSelected = !selectedCharacters.some(selected => selected.id === character.id);
+    
     return matchesSearch && matchesGender && isNotSelected;
   });
 
@@ -105,32 +131,48 @@ const CharacterSelector = ({ heroes, selectedCharacters, onSelectCharacter, onCl
 
         {/* Characters Grid */}
         <div className="flex-1 overflow-y-auto">
-          {filteredHeroes.length > 0 ? (
+          {filteredCharacters.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pb-4">
-              {filteredHeroes.map((hero) => (
+              {filteredCharacters.map((character) => (
                 <div
-                  key={hero.id}
-                  onClick={() => onSelectCharacter(hero)}
+                  key={character.id}
+                  onClick={() => onSelectCharacter(character)}
                   className="flex items-start gap-3 p-3 border border-border rounded-lg hover:border-primary hover:shadow-sm transition-smooth cursor-pointer bg-card hover:bg-accent/50"
                 >
-                  {hero.image && (
+                  {character.image && (
                     <img
-                      src={hero.image}
-                      alt={hero.name}
+                      src={character.image}
+                      alt={character.name}
                       className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
                     />
                   )}
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-foreground mb-1 truncate">{hero.name}</h3>
+                    <h3 className="font-medium text-foreground mb-1 truncate">
+                      {character.name}
+                      {'heroName' in character && (
+                        <span className="text-xs text-muted-foreground ml-2">
+                          (من: {character.heroName})
+                        </span>
+                      )}
+                    </h3>
                     <div className="flex flex-wrap gap-1 mb-2">
-                      <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">
-                        {hero.ageGroup}
-                      </Badge>
-                      <Badge variant="outline" className="text-xs bg-secondary/10 text-secondary-foreground border-secondary/20">
-                        {hero.gender === "male" ? "ذكر" : hero.gender === "female" ? "أنثى" : "آخر"}
-                      </Badge>
+                      {'ageGroup' in character && character.ageGroup && (
+                        <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">
+                          {character.ageGroup}
+                        </Badge>
+                      )}
+                      {'gender' in character && character.gender && (
+                        <Badge variant="outline" className="text-xs bg-secondary/10 text-secondary-foreground border-secondary/20">
+                          {character.gender === "male" ? "ذكر" : character.gender === "female" ? "أنثى" : "آخر"}
+                        </Badge>
+                      )}
+                      {'type' in character && character.type === 'side' && (
+                        <Badge variant="outline" className="text-xs bg-accent/10 text-accent border-accent/30">
+                          شخصية جانبية
+                        </Badge>
+                      )}
                     </div>
-                    <p className="text-sm text-muted-foreground line-clamp-2">{hero.description}</p>
+                    <p className="text-sm text-muted-foreground line-clamp-2">{character.description}</p>
                   </div>
                 </div>
               ))}

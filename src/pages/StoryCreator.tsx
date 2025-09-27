@@ -12,6 +12,13 @@ import CharacterSelector from "@/components/CharacterSelector";
 import SceneCard from "@/components/SceneCard";
 import StoryProgressModal from "@/components/StoryProgressModal";
 
+interface SideCharacter {
+  id: string;
+  name: string;
+  description: string;
+  image?: string;
+}
+
 interface Hero {
   id: string;
   name: string;
@@ -20,13 +27,16 @@ interface Hero {
   style: string;
   description: string;
   image?: string;
+  sideCharacters?: SideCharacter[];
 }
+
+type Character = Hero | (SideCharacter & { heroName: string; type: 'side' });
 
 interface Scene {
   id: string;
   title: string;
   description: string;
-  selectedCharacters: Hero[];
+  selectedCharacters: Character[];
 }
 
 interface StoryCreatorProps {
@@ -72,7 +82,7 @@ const StoryCreator = ({ heroes, onBack }: StoryCreatorProps) => {
     ));
   };
 
-  const addCharacterToScene = (sceneId: string, character: Hero) => {
+  const addCharacterToScene = (sceneId: string, character: Character) => {
     setScenes(prev => prev.map(scene => {
       if (scene.id === sceneId) {
         if (!scene.selectedCharacters.find(c => c.id === character.id)) {

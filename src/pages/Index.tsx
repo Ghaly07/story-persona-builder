@@ -7,6 +7,13 @@ import StoryCreator from "./StoryCreator";
 import { Plus, Users, BookOpen } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+interface SideCharacter {
+  id: string;
+  name: string;
+  description: string;
+  image?: string;
+}
+
 interface Hero {
   id: string;
   name: string;
@@ -15,6 +22,7 @@ interface Hero {
   style: string;
   description: string;
   image?: string;
+  sideCharacters?: SideCharacter[];
 }
 
 const Index = () => {
@@ -27,7 +35,21 @@ const Index = () => {
       ageGroup: "طفلة",
       style: "كرتوني",
       description: "طفلة صغيرة مرحة تحب المغامرات والاستكشاف",
-      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop&crop=face"
+      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop&crop=face",
+      sideCharacters: [
+        {
+          id: "1-1",
+          name: "قطقوط",
+          description: "قطة فرح المفضلة",
+          image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=200&h=200&fit=crop&crop=face"
+        },
+        {
+          id: "1-2",
+          name: "عبود",
+          description: "صديق فرح المقرب",
+          image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&h=200&fit=crop&crop=face"
+        }
+      ]
     },
     {
       id: "2", 
@@ -36,7 +58,15 @@ const Index = () => {
       ageGroup: "رضيع",
       style: "كرتوني",
       description: "طفل صغير لطيف يرتدي ملابس زرقاء",
-      image: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=400&h=400&fit=crop&crop=face"
+      image: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=400&h=400&fit=crop&crop=face",
+      sideCharacters: [
+        {
+          id: "2-1",
+          name: "دبدوبة",
+          description: "لعبة دادا المفضلة",
+          image: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=200&h=200&fit=crop&crop=center"
+        }
+      ]
     },
     {
       id: "3",
@@ -45,7 +75,15 @@ const Index = () => {
       ageGroup: "مراهقة",
       style: "واقعي",
       description: "مراهقة ذكية ومتفوقة في دراستها",
-      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face"
+      image: "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop&crop=face",
+      sideCharacters: [
+        {
+          id: "3-1",
+          name: "نور",
+          description: "أفضل صديقة لسارة",
+          image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=face"
+        }
+      ]
     },
     {
       id: "4",
